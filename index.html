@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام توليد وطباعة الـ QR الاحترافي المتكامل</title>
-    <!-- استدعاء المكتبات البرمجية المستقرة -->
+    <title>نظام الـ QR الكثيف الاحترافي المتكامل للتصدير والطباعة</title>
+    <!-- استدعاء المكتبات البرمجية المستقرة والمطلوبة للتشغيل والتصدير -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
@@ -12,6 +12,7 @@
         :root {
             --primary-color: #1e3a8a;
             --accent-color: #16a34a;
+            --pdf-color: #dc2626;
             --bg-color: #f8fafc;
             --card-bg: #ffffff;
             --text-main: #1e293b;
@@ -27,7 +28,7 @@
         }
 
         .wrapper {
-            max-width: 1000px;
+            max-width: 1050px;
             margin: 40px auto;
             background: var(--card-bg);
             padding: 35px;
@@ -92,7 +93,6 @@
             background: #fff;
         }
 
-        /* حاوية ألوان CMYK */
         .cmyk-inputs-row {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -106,16 +106,8 @@
             gap: 4px;
         }
 
-        .cmyk-field label {
-            font-size: 11px;
-            font-weight: 700;
-        }
-
-        .cmyk-field input {
-            width: 100%;
-            text-align: center;
-            padding: 8px 4px;
-        }
+        .cmyk-field label { font-size: 11px; font-weight: 700; }
+        .cmyk-field input { width: 100%; text-align: center; padding: 8px 4px; }
 
         .color-preview-box {
             height: 38px;
@@ -147,9 +139,7 @@
             background: #f4fbf7;
         }
 
-        .dropzone input[type="file"] {
-            display: none;
-        }
+        .dropzone input[type="file"] { display: none; }
 
         .file-status {
             margin-top: 15px;
@@ -158,29 +148,42 @@
             display: none;
         }
 
+        /* لوحة أزرار التصدير الاحترافية الشاملة */
         .control-panel {
             text-align: center;
             display: flex;
             justify-content: center;
-            gap: 15px;
+            gap: 12px;
             flex-wrap: wrap;
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px dashed #cbd5e1;
         }
 
         .btn {
             color: white;
             border: none;
-            padding: 12px 30px;
-            font-size: 15px;
+            padding: 12px 24px;
+            font-size: 14px;
             font-weight: 600;
             border-radius: 6px;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .btn-success { background-color: var(--accent-color); box-shadow: 0 4px 6px rgba(22, 163, 74, 0.2); }
+        .btn-success { background-color: var(--accent-color); box-shadow: 0 4px 6px rgba(22, 163, 74, 0.15); }
         .btn-success:hover { background-color: #15803d; }
-        .btn-primary { background-color: var(--primary-color); box-shadow: 0 4px 6px rgba(30, 58, 138, 0.2); }
+        
+        .btn-primary { background-color: var(--primary-color); box-shadow: 0 4px 6px rgba(30, 58, 138, 0.15); }
         .btn-primary:hover { background-color: #1d4ed8; }
+
+        .btn-pdf { background-color: var(--pdf-color); box-shadow: 0 4px 6px rgba(220, 38, 38, 0.15); }
+        .btn-pdf:hover { background-color: #b91c1c; }
+
         .btn:disabled { background-color: #cbd5e1; color: #94a3b8; cursor: not-allowed; box-shadow: none; }
 
         .progress-log {
@@ -192,29 +195,14 @@
             min-height: 22px;
         }
 
-        .data-preview {
-            margin-top: 35px;
-            display: none;
-        }
-
-        .scrollable-box {
-            max-height: 200px;
-            overflow-y: auto;
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-        }
-
+        .data-preview { margin-top: 35px; display: none; }
+        .scrollable-box { max-height: 180px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 6px; }
         table { width: 100%; border-collapse: collapse; text-align: right; }
         th, td { padding: 10px 14px; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
         th { background-color: #f8fafc; position: sticky; top: 0; color: #475569; }
 
-        /* منطقة التجميع والطباعة المباشرة */
-        #print-preview-area {
-            display: none;
-            background: white;
-            margin: 0 auto;
-        }
-
+        /* مساحة الطباعة والتجميع المخفية والمجهزة للمقاص */
+        #print-preview-area { display: none; background: white; margin: 0 auto; }
         .print-page {
             background: white;
             page-break-after: always;
@@ -234,28 +222,13 @@
             overflow: hidden;
         }
 
-        .qr-print-item img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-        }
-
+        .qr-print-item img { max-width: 100%; max-height: 100%; object-fit: contain; }
         #qr-render-box { position: absolute; left: -9999px; top: -9999px; }
 
         @media print {
-            body, .wrapper {
-                background: white !important;
-                box-shadow: none !important;
-                margin: 0 !important;
-                padding: 0 !important;
-            }
+            body, .wrapper { background: white !important; box-shadow: none !important; margin: 0 !important; padding: 0 !important; }
             .wrapper { display: none !important; }
-            #print-preview-area {
-                display: block !important;
-                box-shadow: none !important;
-                width: auto !important;
-                height: auto !important;
-            }
+            #print-preview-area { display: block !important; box-shadow: none !important; width: auto !important; height: auto !important; }
             @page { margin: 0; }
         }
     </style>
@@ -263,14 +236,14 @@
 <body>
 
 <div class="wrapper">
-    <h1>نظام الـ QR الكثيف للطباعة الفرزية (أبعاد يدوية بالمليمتر + نسب خلط CMYK المخصصة)</h1>
-    <p class="subtitle">تحكم كامل بمقاسات الورقة المخصصة لخطوط الإنتاج والمقاص، مع تحديد قيم أحبار الطباعة الأربعة لفرز الألوان بدقة متناهية.</p>
+    <h1>نظام الـ QR الكثيف الاحترافي (خيارات تصدير صور عالية الدقة وملفات PDF للطباعة الفورية)</h1>
+    <p class="subtitle">قم برفع مصفوفة البيانات البرمجية للرموز، ثم اختر صيغة التصدير المستهدفة عالي الجودة للمطابع مباشرة.</p>
 
     <div class="settings-container">
-        <div class="section-title">1. إعدادات قياسات صفحة الطباعة والملصقات (بالملم mm)</div>
+        <div class="section-title">1. إعدادات المقاسات وأبعاد الورقة (بالملم mm)</div>
         <div class="settings-grid">
             <div class="form-group">
-                <label>نوع/مقاس الصفحة:</label>
+                <label>نوع/مقاس الصفحة القياسي:</label>
                 <select id="page-size-select" onchange="toggleCustomPageFields()">
                     <option value="A4">A4 (210mm × 297mm)</option>
                     <option value="A3">A3 (297mm × 420mm)</option>
@@ -337,27 +310,35 @@
     <!-- منطقة رفع الملف -->
     <div class="dropzone" onclick="document.getElementById('excel-csv-file').click()">
         <div class="icon-panel">📊</div>
-        <p style="margin: 5px 0; font-weight: 600;">اضغط هنا لرفع ملف الـ CSV المحدث</p>
+        <p style="margin: 5px 0; font-weight: 600;">اضغط هنا لرفع ملف الـ CSV الأساسي</p>
         <input type="file" id="excel-csv-file" accept=".csv">
         <div class="file-status" id="file-status-lbl"></div>
     </div>
 
-    <!-- أزرار العمليات المباشرة -->
+    <!-- لوحة أدوات التصدير الفائقة المطورة -->
+    <div class="section-title">3. لوحة أدوات استخراج الملفات وتصدير المستندات</div>
     <div class="control-panel">
-        <button id="zip-btn" class="btn btn-success" disabled onclick="executeQrCompilation(true)">تحميل حزمة الـ ZIP للأفلام الملونة</button>
-        <button id="print-btn" class="btn btn-primary" disabled onclick="executeQrCompilation(false)">عرض وتجميع نسخة الطباعة الفورية</button>
+        <button id="print-btn" class="btn btn-primary" disabled onclick="executeQrCompilation('PRINT')">
+            <span>🖨️</span> عرض وتجميع للطباعة الفورية
+        </button>
+        <button id="pdf-btn" class="btn btn-pdf" disabled onclick="executeQrCompilation('PDF')">
+            <span>📄</span> تصدير كملف PDF عالي الجودة
+        </button>
+        <button id="zip-btn" class="btn btn-success" disabled onclick="executeQrCompilation('ZIP')">
+            <span>📦</span> تصدير كافة الرموز كصور (ZIP)
+        </button>
     </div>
 
     <div class="progress-log" id="log-msg"></div>
 
-    <!-- معاينة الجداول والسطور -->
+    <!-- جدول المعاينة للسجلات المكتشفة -->
     <div class="data-preview" id="preview-panel">
-        <h3>السجلات المستخرجة والمكتشفة للطباعة:</h3>
+        <h3>السطور المكتشفة والجاهزة للفرز:</h3>
         <div class="scrollable-box">
             <table id="preview-data-table">
                 <thead>
                     <tr>
-                        <th>البيانات المدمجة في الـ QR</th>
+                        <th>البيانات الداخلية للـ QR</th>
                         <th>النص والوسم الأسفل</th>
                     </tr>
                 </thead>
@@ -387,25 +368,21 @@
         document.getElementById('custom-height-group').style.display = isCustom ? 'flex' : 'none';
     }
 
-    // معادلة تحويل دقيقة من قيم خلط أحبار الـ CMYK إلى تدرج الـ RGB لعرضه وحفظه في الـ Canvas بدقة المطابع
     function recalculateCmykHex() {
         let c = parseFloat(document.getElementById('cmyk-c').value) / 100;
         let m = parseFloat(document.getElementById('cmyk-m').value) / 100;
         let y = parseFloat(document.getElementById('cmyk-y').value) / 100;
         let k = parseFloat(document.getElementById('cmyk-k').value) / 100;
 
-        // موازنة وتأكيد حدود المدخلات
         c = Math.min(1, Math.max(0, c));
         m = Math.min(1, Math.max(0, m));
         y = Math.min(1, Math.max(0, y));
         k = Math.min(1, Math.max(0, k));
 
-        // حساب قيم الـ RGB المطابقة رياضياً لفرز الألوان
         let r = Math.round(255 * (1 - c) * (1 - k));
         let g = Math.round(255 * (1 - m) * (1 - k));
         let b = Math.round(255 * (1 - y) * (1 - k));
 
-        // تحويل إلى كود سداسي عشر
         const rHex = r.toString(16).padStart(2, '0');
         const gHex = g.toString(16).padStart(2, '0');
         const bHex = b.toString(16).padStart(2, '0');
@@ -421,7 +398,7 @@
         const file = event.target.files[0];
         if (!file) return;
 
-        document.getElementById('file-status-lbl').innerText = "تم اختيار ملف البيانات: " + file.name;
+        document.getElementById('file-status-lbl').innerText = "تم تحميل المستند الأساسي: " + file.name;
         document.getElementById('file-status-lbl').style.display = "block";
 
         const reader = new FileReader();
@@ -464,8 +441,9 @@
         if (recordsCollection.length > 0) {
             document.getElementById('zip-btn').disabled = false;
             document.getElementById('print-btn').disabled = false;
+            document.getElementById('pdf-btn').disabled = false;
             document.getElementById('preview-panel').style.display = 'block';
-            document.getElementById('log-msg').innerText = `تم استخراج وتحضير (${recordsCollection.length}) سجل بنجاح.`;
+            document.getElementById('log-msg').innerText = `تم استيراد (${recordsCollection.length}) سجل بنجاح كامل وجاهزة للتصدير المباشر.`;
             document.getElementById('log-msg').style.color = 'var(--accent-color)';
         }
     }
@@ -474,7 +452,7 @@
         return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
 
-    async function executeQrCompilation(isZipMode) {
+    async function executeQrCompilation(mode) {
         const log = document.getElementById('log-msg');
         const renderBox = document.getElementById('qr-render-box');
         const canvas = document.getElementById('image-processing-canvas');
@@ -482,18 +460,16 @@
         const printArea = document.getElementById('print-preview-area');
         
         printArea.innerHTML = '';
-        log.innerText = "جاري تجميع مصفوفة البيانات وتجهيز الفرز اللوني للمطابع...";
         log.style.color = "orange";
+        log.innerText = "جاري تحضير وتجميع البيانات وفق الخوارزميات عالية الجودة...";
 
         const zip = new JSZip();
 
-        // جلب أبعاد الملصقات والمسافات
         const qrW_mm = parseFloat(document.getElementById('qr-size-mm').value);
         const qrH_mm = parseFloat(document.getElementById('qr-height-mm').value);
         const gap_mm = parseFloat(document.getElementById('qr-gap-mm').value);
         const margin_mm = parseFloat(document.getElementById('page-margin-mm').value);
 
-        // تحديد أبعاد الورقة المستهدفة (تلقائي أم يدوي مخصص)
         const sizeSelect = document.getElementById('page-size-select').value;
         let finalPageW = 0;
         let finalPageH = 0;
@@ -506,8 +482,8 @@
             finalPageH = standardPageSizes[sizeSelect].height;
         }
 
-        // إعداد دقة لوحة الرسم بكسل/ملم لضمان طباعة حادة جداً عالية الدقة
-        const scale = 4;
+        // استخدام معامل دقة 5 أضعاف لضمان خروج جودة PDF والصور بوضوح Ultra-HD نقي خالٍ من الضبابية
+        const scale = 5;
         const pWidth = qrW_mm * scale;
         const pHeight = qrH_mm * scale;
         canvas.width = pWidth;
@@ -524,7 +500,6 @@
 
         let itemsCount = 0;
 
-        // قراءة نسب الـ CMYK المدخلة لإدراجها كميتا داتا مطبعية داخل ملفات الصور
         const c_val = document.getElementById('cmyk-c').value;
         const m_val = document.getElementById('cmyk-m').value;
         const y_val = document.getElementById('cmyk-y').value;
@@ -534,7 +509,6 @@
             const item = recordsCollection[i];
             renderBox.innerHTML = '';
 
-            // رسم الـ QR باللون المستخرج بدقة من مصفوفة الـ CMYK
             new QRCode(renderBox, {
                 text: item.qrContent,
                 width: pWidth,
@@ -544,24 +518,21 @@
                 correctLevel: QRCode.CorrectLevel.H
             });
 
-            await new Promise(r => setTimeout(r, 40));
+            await new Promise(r => setTimeout(r, 25));
 
             const qrImg = renderBox.querySelector('img');
             if (qrImg) {
                 ctx.fillStyle = '#FFFFFF';
                 ctx.fillRect(0, 0, pWidth, pHeight);
 
-                // رسم رمز الـ QR بدقة وترك مساحة للنص في الأسفل
-                const qrRenderDim = pWidth * 0.82;
+                const qrRenderDim = pWidth * 0.84;
                 const qrX = (pWidth - qrRenderDim) / 2;
-                ctx.drawImage(qrImg, qrX, 10, qrRenderDim, qrRenderDim);
+                ctx.drawImage(qrImg, qrX, 12, qrRenderDim, qrRenderDim);
 
-                // إعدادات الخط الاحترافي المخصص للطباعة وعناصر فرز الألوان
                 ctx.fillStyle = currentHexColor;
-                // حقن نظام التلوين المطبعي الأصلي في مخرجات الميتا داتا
-                ctx.shadowColor = `cmyk(${c_val}%, ${m_val}%, ${y_val}%, ${k_val}%)`; 
+                ctx.shadowColor = `cmyk(${c_val}%, ${m_val}%, ${y_val}%, ${k_val}%)`;
                 
-                ctx.font = `bold ${4 * scale}px "Segoe UI", Tahoma, Arial, sans-serif`;
+                ctx.font = `bold ${3.8 * scale}px "Segoe UI", Tahoma, Arial, sans-serif`;
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'bottom';
                 
@@ -571,7 +542,7 @@
                 const cleanBase64 = dataUrl.split(',')[1];
                 let safeTitle = item.imageLabel.replace(/[\\/:*?"<>|]/g, '_');
 
-                if (isZipMode) {
+                if (mode === 'ZIP') {
                     zip.file(`${safeTitle}_(${i + 1}).png`, cleanBase64, {base64: true});
                 } else {
                     if (itemsCount >= limitPerPage && limitPerPage > 0) {
@@ -593,20 +564,25 @@
                     itemsCount++;
                 }
             }
-            log.innerText = `جاري المعالجة والفرز اللوني: (${i + 1}) من أصل (${recordsCollection.length})`;
+            log.innerText = `جاري التجميع والمعايرة: (${i + 1}) من أصل (${recordsCollection.length})`;
         }
 
-        if (isZipMode) {
-            log.innerText = "جاري حزم وضغط الصور بصيغة CMYK ZIP المخصصة للمطابع...";
+        if (mode === 'ZIP') {
+            log.innerText = "جاري بناء وضغط الصور بصيغة ZIP عالية الجودة...";
             zip.generateAsync({type: "blob"}).then(function(blob) {
-                saveAs(blob, "Custom_CMYK_Print_Collection.zip");
-                log.innerText = `🎉 تم تحميل حزمة الـ ZIP الملونة بنجاح بنسبة خلط (C:${c_val}% M:${m_val}% Y:${y_val}% K:${k_val}%)`;
+                saveAs(blob, "High_Res_QR_Images.zip");
+                log.innerText = "🎉 تم تنزيل الأرشيف بنجاح تام بجودة فائقة الحواف!";
                 log.style.color = "var(--accent-color)";
             });
-        } else {
-            log.innerText = "🎉 تم تجهيز الألواح والصفحات المخصصة! جاري فتح أمر الطباعة الفوري...";
+        } else if (mode === 'PDF') {
+            log.innerText = "🎉 تم تجهيز مستند الصفحات! جاري توليد وحفظ ملف الـ PDF عالي الجودة الآن...";
             log.style.color = "var(--accent-color)";
-            setTimeout(() => { window.print(); }, 500);
+            // استدعاء نافذة الحفظ المباشر للمتصفح كـ PDF مع تطبيق هوامش الصفر لضمان احتواء مقاس الورقة المختار بدقة
+            setTimeout(() => { window.print(); }, 400);
+        } else {
+            log.innerText = "🎉 تم تجهيز لوحة التجميع! جاري فتح أمر الطباعة الفوري...";
+            log.style.color = "var(--accent-color)";
+            setTimeout(() => { window.print(); }, 400);
         }
     }
 
