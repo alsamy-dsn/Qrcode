@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام توليد وطباعة الـ QR الكثيف والمطوّر</title>
-    <!-- استدعاء المكتبات البرمجية الأساسية -->
+    <title>نظام توليد وطباعة الـ QR الاحترافي المتكامل</title>
+    <!-- استدعاء المكتبات البرمجية المستقرة -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
@@ -26,9 +26,8 @@
             direction: rtl;
         }
 
-        /* تنسيقات واجهة التحكم للمستخدم */
         .wrapper {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 40px auto;
             background: var(--card-bg);
             padding: 35px;
@@ -50,15 +49,27 @@
             margin-bottom: 30px;
         }
 
-        /* لوحة التحكم بالإعدادات والمقاسات */
-        .settings-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-            padding: 20px;
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-top: 10px;
+            margin-bottom: 15px;
+            border-right: 4px solid var(--primary-color);
+            padding-right: 8px;
+        }
+
+        .settings-container {
             background: #f1f5f9;
             border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
         }
 
         .form-group {
@@ -69,7 +80,7 @@
 
         .form-group label {
             font-weight: 600;
-            font-size: 14px;
+            font-size: 13px;
             color: #334155;
         }
 
@@ -79,6 +90,45 @@
             border-radius: 6px;
             font-size: 14px;
             background: #fff;
+        }
+
+        /* حاوية ألوان CMYK */
+        .cmyk-inputs-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .cmyk-field {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .cmyk-field label {
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .cmyk-field input {
+            width: 100%;
+            text-align: center;
+            padding: 8px 4px;
+        }
+
+        .color-preview-box {
+            height: 38px;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.6);
         }
 
         .dropzone {
@@ -101,13 +151,19 @@
             display: none;
         }
 
+        .file-status {
+            margin-top: 15px;
+            font-weight: 700;
+            color: var(--accent-color);
+            display: none;
+        }
+
         .control-panel {
             text-align: center;
             display: flex;
             justify-content: center;
             gap: 15px;
             flex-wrap: wrap;
-            margin-top: 20px;
         }
 
         .btn {
@@ -133,6 +189,7 @@
             font-weight: 600;
             font-size: 15px;
             color: var(--primary-color);
+            min-height: 22px;
         }
 
         .data-preview {
@@ -141,7 +198,7 @@
         }
 
         .scrollable-box {
-            max-height: 220px;
+            max-height: 200px;
             overflow-y: auto;
             border: 1px solid #e2e8f0;
             border-radius: 6px;
@@ -151,12 +208,11 @@
         th, td { padding: 10px 14px; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
         th { background-color: #f8fafc; position: sticky; top: 0; color: #475569; }
 
-        /* حاوية وضع الطباعة الفوري المجمع */
+        /* منطقة التجميع والطباعة المباشرة */
         #print-preview-area {
-            display: none; /* مخفي بالوضع الطبيعي */
+            display: none;
             background: white;
             margin: 0 auto;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
         }
 
         .print-page {
@@ -175,7 +231,6 @@
             justify-content: center;
             background: white;
             box-sizing: border-box;
-            text-align: center;
             overflow: hidden;
         }
 
@@ -185,17 +240,8 @@
             object-fit: contain;
         }
 
-        .qr-print-text {
-            font-weight: bold;
-            color: #000000;
-            width: 100%;
-            word-wrap: break-word;
-            box-sizing: border-box;
-        }
-
         #qr-render-box { position: absolute; left: -9999px; top: -9999px; }
 
-        /* ==================== تخصيصات الطباعة الرسمية المباشرة ==================== */
         @media print {
             body, .wrapper {
                 background: white !important;
@@ -203,85 +249,116 @@
                 margin: 0 !important;
                 padding: 0 !important;
             }
-            .wrapper { display: none !important; } /* إخفاء واجهة التحكم بالكامل */
+            .wrapper { display: none !important; }
             #print-preview-area {
                 display: block !important;
                 box-shadow: none !important;
                 width: auto !important;
                 height: auto !important;
             }
-            @page {
-                margin: 0; /* تحكم يدوي بالهوامش عن طريق الكود */
-            }
+            @page { margin: 0; }
         }
     </style>
 </head>
 <body>
 
 <div class="wrapper">
-    <h1>نظام الـ QR الكثيف المتكامل (دعم مقاسات المليمتر MM ونظام الألوان المطبوعة CMYK)</h1>
-    <p class="subtitle">قم بضبط قياسات الملصق ومساحة الورقة بالمليمتر بدقة متناهية، واختيار نمط الألوان المخصص للمطابع الاحترافية.</p>
+    <h1>نظام الـ QR الكثيف للطباعة الفرزية (أبعاد يدوية بالمليمتر + نسب خلط CMYK المخصصة)</h1>
+    <p class="subtitle">تحكم كامل بمقاسات الورقة المخصصة لخطوط الإنتاج والمقاص، مع تحديد قيم أحبار الطباعة الأربعة لفرز الألوان بدقة متناهية.</p>
 
-    <!-- لوحة ضبط القياسات المتطورة بالمليمتر -->
-    <div class="settings-grid">
-        <div class="form-group">
-            <label>مقاس صفحة الطباعة القياسي:</label>
-            <select id="page-size-select" onchange="updatePageSizingHint()">
-                <option value="A4">A4 (210mm × 297mm)</option>
-                <option value="A3">A3 (297mm × 420mm)</option>
-                <option value="A5">A5 (148mm × 210mm)</option>
-            </select>
+    <div class="settings-container">
+        <div class="section-title">1. إعدادات قياسات صفحة الطباعة والملصقات (بالملم mm)</div>
+        <div class="settings-grid">
+            <div class="form-group">
+                <label>نوع/مقاس الصفحة:</label>
+                <select id="page-size-select" onchange="toggleCustomPageFields()">
+                    <option value="A4">A4 (210mm × 297mm)</option>
+                    <option value="A3">A3 (297mm × 420mm)</option>
+                    <option value="A5">A5 (148mm × 210mm)</option>
+                    <option value="CUSTOM">-- مقاس مخصص يدوي --</option>
+                </select>
+            </div>
+            <div class="form-group custom-page-field" id="custom-width-group" style="display:none;">
+                <label>عرض الصفحة المخصص (mm):</label>
+                <input type="number" id="custom-page-w" value="200" min="50">
+            </div>
+            <div class="form-group custom-page-field" id="custom-height-group" style="display:none;">
+                <label>ارتفاع الصفحة المخصص (mm):</label>
+                <input type="number" id="custom-page-h" value="300" min="50">
+            </div>
+            <div class="form-group">
+                <label>عرض ملصق الـ QR (mm):</label>
+                <input type="number" id="qr-size-mm" value="40" min="10">
+            </div>
+            <div class="form-group">
+                <label>ارتفاع ملصق الـ QR الكلي (mm):</label>
+                <input type="number" id="qr-height-mm" value="50" min="15">
+            </div>
+            <div class="form-group">
+                <label>المسافات البينية بين الملصقات (mm):</label>
+                <input type="number" id="qr-gap-mm" value="3" min="0">
+            </div>
+            <div class="form-group">
+                <label>الهامش الداخلي للورقة (mm):</label>
+                <input type="number" id="page-margin-mm" value="10" min="0">
+            </div>
         </div>
-        <div class="form-group">
-            <label>عرض ملصق الـ QR (بالملم mm):</label>
-            <input type="number" id="qr-size-mm" value="40" min="10">
-        </div>
-        <div class="form-group">
-            <label>ارتفاع ملصق الـ QR الكلي (بالملم mm):</label>
-            <input type="number" id="qr-height-mm" value="50" min="15">
-        </div>
-        <div class="form-group">
-            <label>المسافة البينية بين الملصقات (mm):</label>
-            <input type="number" id="qr-gap-mm" value="3" min="0">
-        </div>
-        <div class="form-group">
-            <label>الهامش الداخلي للورقة (mm):</label>
-            <input type="number" id="page-margin-mm" value="10" min="0">
-        </div>
-        <div class="form-group">
-            <label>وضع الألوان المستهدف (Color Mode):</label>
-            <select id="color-mode-select">
-                <option value="RGB">RGB (العرض الافتراضي على الشاشات الرقمية)</option>
-                <option value="CMYK">CMYK (محاكاة ألوان الفرز للمطابع ومستندات PDF)</option>
-            </select>
+
+        <div class="section-title" style="margin-top:25px;">2. إعدادات نسب الحبر والفرز اللوني المطبعي (CMYK Mix)</div>
+        <div class="settings-grid">
+            <div class="form-group" style="grid-column: span 2;">
+                <label>أدخل نسب خلط ألوان الطباعة الأربعة (%):</label>
+                <div class="cmyk-inputs-row">
+                    <div class="cmyk-field">
+                        <label style="color:#00aeef;">C (سماوي)</label>
+                        <input type="number" id="cmyk-c" value="0" min="0" max="100" oninput="recalculateCmykHex()">
+                    </div>
+                    <div class="cmyk-field">
+                        <label style="color:#ec008c;">M (أرجواني)</label>
+                        <input type="number" id="cmyk-m" value="0" min="0" max="100" oninput="recalculateCmykHex()">
+                    </div>
+                    <div class="cmyk-field">
+                        <label style="color:#fff200; text-shadow:0 0 1px #000;">Y (أصفر)</label>
+                        <input type="number" id="cmyk-y" value="0" min="0" max="100" oninput="recalculateCmykHex()">
+                    </div>
+                    <div class="cmyk-field">
+                        <label style="color:#000000;">K (أسود صافي)</label>
+                        <input type="number" id="cmyk-k" value="100" min="0" max="100" oninput="recalculateCmykHex()">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>معاينة لون الفرز المختار:</label>
+                <div id="cmyk-preview" class="color-preview-box" style="background-color: #000000;">K: 100%</div>
+            </div>
         </div>
     </div>
 
-    <!-- منطقة إسقاط الملف -->
+    <!-- منطقة رفع الملف -->
     <div class="dropzone" onclick="document.getElementById('excel-csv-file').click()">
         <div class="icon-panel">📊</div>
-        <p style="margin: 5px 0; font-weight: 600;">اضغط هنا لرفع ملف الـ CSV (يدعم الفاصلة العادية والمنقوطة)</p>
+        <p style="margin: 5px 0; font-weight: 600;">اضغط هنا لرفع ملف الـ CSV المحدث</p>
         <input type="file" id="excel-csv-file" accept=".csv">
         <div class="file-status" id="file-status-lbl"></div>
     </div>
 
-    <!-- أزرار العمليات -->
+    <!-- أزرار العمليات المباشرة -->
     <div class="control-panel">
-        <button id="zip-btn" class="btn btn-success" disabled onclick="executeQrCompilation(true)">تحميل الصور مجمعة في ملف ZIP</button>
-        <button id="print-btn" class="btn btn-primary" disabled onclick="executeQrCompilation(false)">تجميع وعرض نسخة الطباعة المجمعة</button>
+        <button id="zip-btn" class="btn btn-success" disabled onclick="executeQrCompilation(true)">تحميل حزمة الـ ZIP للأفلام الملونة</button>
+        <button id="print-btn" class="btn btn-primary" disabled onclick="executeQrCompilation(false)">عرض وتجميع نسخة الطباعة الفورية</button>
     </div>
 
     <div class="progress-log" id="log-msg"></div>
 
-    <!-- معاينة السجلات -->
+    <!-- معاينة الجداول والسطور -->
     <div class="data-preview" id="preview-panel">
-        <h3>معاينة السجلات المستخرجة والجاهزة:</h3>
+        <h3>السجلات المستخرجة والمكتشفة للطباعة:</h3>
         <div class="scrollable-box">
             <table id="preview-data-table">
                 <thead>
                     <tr>
-                        <th>البيانات الداخلية (QR Content)</th>
-                        <th>النص المطبوع واسم الملف</th>
+                        <th>البيانات المدمجة في الـ QR</th>
+                        <th>النص والوسم الأسفل</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -290,63 +367,96 @@
     </div>
 </div>
 
-<!-- المساحة المخصصة للتجميع والطباعة المباشرة من المتصفح -->
 <div id="print-preview-area"></div>
-
 <div id="qr-render-box"></div>
 <canvas id="image-processing-canvas" style="display:none;"></canvas>
 
 <script>
     let recordsCollection = [];
-    
-    // مقاسات الصفحات القياسية بالمليمتر
-    const pageDimensions = {
+    let currentHexColor = "#000000";
+
+    const standardPageSizes = {
         'A4': { width: 210, height: 297 },
         'A3': { width: 297, height: 420 },
         'A5': { width: 148, height: 210 }
     };
 
-    document.getElementById('excel-csv-file').addEventListener('change', function(event) {
-        const selectedFile = event.target.files[0];
-        if (!selectedFile) return;
+    function toggleCustomPageFields() {
+        const isCustom = document.getElementById('page-size-select').value === 'CUSTOM';
+        document.getElementById('custom-width-group').style.display = isCustom ? 'flex' : 'none';
+        document.getElementById('custom-height-group').style.display = isCustom ? 'flex' : 'none';
+    }
 
-        document.getElementById('file-status-lbl').innerText = "تم اختيار ملف: " + selectedFile.name;
+    // معادلة تحويل دقيقة من قيم خلط أحبار الـ CMYK إلى تدرج الـ RGB لعرضه وحفظه في الـ Canvas بدقة المطابع
+    function recalculateCmykHex() {
+        let c = parseFloat(document.getElementById('cmyk-c').value) / 100;
+        let m = parseFloat(document.getElementById('cmyk-m').value) / 100;
+        let y = parseFloat(document.getElementById('cmyk-y').value) / 100;
+        let k = parseFloat(document.getElementById('cmyk-k').value) / 100;
+
+        // موازنة وتأكيد حدود المدخلات
+        c = Math.min(1, Math.max(0, c));
+        m = Math.min(1, Math.max(0, m));
+        y = Math.min(1, Math.max(0, y));
+        k = Math.min(1, Math.max(0, k));
+
+        // حساب قيم الـ RGB المطابقة رياضياً لفرز الألوان
+        let r = Math.round(255 * (1 - c) * (1 - k));
+        let g = Math.round(255 * (1 - m) * (1 - k));
+        let b = Math.round(255 * (1 - y) * (1 - k));
+
+        // تحويل إلى كود سداسي عشر
+        const rHex = r.toString(16).padStart(2, '0');
+        const gHex = g.toString(16).padStart(2, '0');
+        const bHex = b.toString(16).padStart(2, '0');
+        
+        currentHexColor = `#${rHex}${gHex}${bHex}`;
+        
+        const previewBox = document.getElementById('cmyk-preview');
+        previewBox.style.backgroundColor = currentHexColor;
+        previewBox.innerText = `RGB: ${currentHexColor.toUpperCase()}`;
+    }
+
+    document.getElementById('excel-csv-file').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        document.getElementById('file-status-lbl').innerText = "تم اختيار ملف البيانات: " + file.name;
         document.getElementById('file-status-lbl').style.display = "block";
 
-        const fileReader = new FileReader();
-        fileReader.onload = function(e) {
-            parseCsvRobustly(e.target.result);
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            parseCsvInput(e.target.result);
         };
-        fileReader.readAsText(selectedFile, 'UTF-8');
+        reader.readAsText(file, 'UTF-8');
     });
 
-    function parseCsvRobustly(rawText) {
+    function parseCsvInput(textData) {
         recordsCollection = [];
-        const tableBody = document.querySelector('#preview-data-table tbody');
-        tableBody.innerHTML = '';
+        const tbody = document.querySelector('#preview-data-table tbody');
+        tbody.innerHTML = '';
 
-        const lines = rawText.split(/\r\n|\n|\r/);
-
+        const lines = textData.split(/\r\n|\n|\r/);
         for (let i = 0; i < lines.length; i++) {
-            const currentLine = lines[i].trim();
-            if (!currentLine) continue; 
+            const line = lines[i].trim();
+            if (!line) continue;
 
-            let columns = [];
-            if (currentLine.includes(';')) {
-                columns = currentLine.split(/;(?=(?:(?:[^\"]*\"){2})*[^\"]*$)/);
+            let cols = [];
+            if (line.includes(';')) {
+                cols = line.split(/;(?=(?:(?:[^\"]*\"){2})*[^\"]*$)/);
             } else {
-                columns = currentLine.split(/,(?=(?:(?:[^\"]*\"){2})*[^\"]*$)/);
+                cols = line.split(/,(?=(?:(?:[^\"]*\"){2})*[^\"]*$)/);
             }
-            
-            if (columns.length >= 1) {
-                let qrDataValue = columns[0].replace(/^"|"$/g, '').trim();
-                let textLabelValue = columns[1] ? columns[1].replace(/^"|"$/g, '').trim() : qrDataValue;
 
-                if (qrDataValue) {
-                    recordsCollection.push({ qrContent: qrDataValue, imageLabel: textLabelValue });
-                    const newRow = document.createElement('tr');
-                    newRow.innerHTML = `<td>${escapeHtml(qrDataValue)}</td><td>${escapeHtml(textLabelValue)}</td>`;
-                    tableBody.appendChild(newRow);
+            if (cols.length >= 1) {
+                let qrData = cols[0].replace(/^"|"$/g, '').trim();
+                let txtLabel = cols[1] ? cols[1].replace(/^"|"$/g, '').trim() : qrData;
+
+                if (qrData) {
+                    recordsCollection.push({ qrContent: qrData, imageLabel: txtLabel });
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `<td>${escapeHtml(qrData)}</td><td>${escapeHtml(txtLabel)}</td>`;
+                    tbody.appendChild(tr);
                 }
             }
         }
@@ -355,173 +465,160 @@
             document.getElementById('zip-btn').disabled = false;
             document.getElementById('print-btn').disabled = false;
             document.getElementById('preview-panel').style.display = 'block';
-            document.getElementById('log-msg').innerText = `تم قراءة (${recordsCollection.length}) سجل جاهز تماماً.`;
+            document.getElementById('log-msg').innerText = `تم استخراج وتحضير (${recordsCollection.length}) سجل بنجاح.`;
             document.getElementById('log-msg').style.color = 'var(--accent-color)';
         }
     }
 
-    function escapeHtml(text) {
-        return String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    }
-
-    // دالة محاكاة وتصحيح الألوان لتطابق نظام الفرز المطبعي CMYK
-    // المتصفحات تقرأ سداسي عشر فقط، لذا نقوم بتخفيض حدة ألوان الفلورسنت الرقمية لتبدو مطابقة للواقع المطبوع
-    function getCorrectedColorProfile(hexColor, isCMYK) {
-        if (!isCMYK) return hexColor;
-        // تقريب ألوان الـ RGB الرقمية الساطعة إلى النطاق المطبعي النقي (CMYK Gamut Correction)
-        return "#000000"; // للطباعة النقية للأكواد يفضل دائماً إستخدام الأسود الصافي المطلق
+    function escapeHtml(str) {
+        return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
 
     async function executeQrCompilation(isZipMode) {
-        const logLabel = document.getElementById('log-msg');
-        const temporaryBox = document.getElementById('qr-render-box');
-        const drawingCanvas = document.getElementById('image-processing-canvas');
-        const canvasCtx = drawingCanvas.getContext('2d');
-        const printPreviewArea = document.getElementById('print-preview-area');
+        const log = document.getElementById('log-msg');
+        const renderBox = document.getElementById('qr-render-box');
+        const canvas = document.getElementById('image-processing-canvas');
+        const ctx = canvas.getContext('2d');
+        const printArea = document.getElementById('print-preview-area');
         
-        printPreviewArea.innerHTML = ''; // تصفير مساحة الطباعة
-        
-        logLabel.innerText = "جاري إنتاج ومعالجة الأكواد البرمجية وفقاً للأبعاد الجديدة...";
-        
-        const archiveZip = new JSZip();
-        
-        // استخراج أبعاد المدخلات بالمليمتر
-        const qrWidthMm = parseFloat(document.getElementById('qr-size-mm').value);
-        const qrHeightMm = parseFloat(document.getElementById('qr-height-mm').value);
-        const qrGapMm = parseFloat(document.getElementById('qr-gap-mm').value);
-        const pageMarginMm = parseFloat(document.getElementById('page-margin-mm').value);
-        const selectedPageType = document.getElementById('page-size-select').value;
-        const isCMYKMode = (document.getElementById('color-mode-select').value === 'CMYK');
-        
-        const pageW = pageDimensions[selectedPageType].width;
-        const pageH = pageDimensions[selectedPageType].height;
+        printArea.innerHTML = '';
+        log.innerText = "جاري تجميع مصفوفة البيانات وتجهيز الفرز اللوني للمطابع...";
+        log.style.color = "orange";
 
-        // إعداد أبعاد لوحة الرسم الرقمية بدقة عالية (تحويل نسبي من ملم لبكسل لضمان جودة الطباعة النقية)
-        const scaleFactor = 4; // معامل دقة حواف الصورة الناتجة لتبدو حادة عند الطباعة العريضة
-        const pixelWidth = qrWidthMm * scaleFactor;
-        const pixelHeight = qrHeightMm * scaleFactor;
-        
-        drawingCanvas.width = pixelWidth;
-        drawingCanvas.height = pixelHeight;
+        const zip = new JSZip();
 
-        // إعداد حاويات صفحات الطباعة الافتراضية
-        let currentPageElement = createNewPrintPage(pageW, pageH, pageMarginMm, qrWidthMm, qrHeightMm, qrGapMm);
-        printPreviewArea.appendChild(currentPageElement);
-        
-        // حساب السعة القصوى المتاحة داخل الصفحة الواحدة لتفادي عبور العناصر الهوامش
-        const availableWidth = pageW - (pageMarginMm * 2);
-        const availableHeight = pageH - (pageMarginMm * 2);
-        const colsCount = Math.floor((availableWidth + qrGapMm) / (qrWidthMm + qrGapMm));
-        const rowsCount = Math.floor((availableHeight + qrGapMm) / (qrHeightMm + qrGapMm));
-        const itemsPerPage = colsCount * rowsCount;
-        
-        let processedInPage = 0;
+        // جلب أبعاد الملصقات والمسافات
+        const qrW_mm = parseFloat(document.getElementById('qr-size-mm').value);
+        const qrH_mm = parseFloat(document.getElementById('qr-height-mm').value);
+        const gap_mm = parseFloat(document.getElementById('qr-gap-mm').value);
+        const margin_mm = parseFloat(document.getElementById('page-margin-mm').value);
 
-        for (let index = 0; index < recordsCollection.length; index++) {
-            const item = recordsCollection[index];
-            temporaryBox.innerHTML = '';
+        // تحديد أبعاد الورقة المستهدفة (تلقائي أم يدوي مخصص)
+        const sizeSelect = document.getElementById('page-size-select').value;
+        let finalPageW = 0;
+        let finalPageH = 0;
 
-            // توليد الـ QR الأساسي بدقة عالية
-            new QRCode(temporaryBox, {
+        if (sizeSelect === 'CUSTOM') {
+            finalPageW = parseFloat(document.getElementById('custom-page-w').value);
+            finalPageH = parseFloat(document.getElementById('custom-page-h').value);
+        } else {
+            finalPageW = standardPageSizes[sizeSelect].width;
+            finalPageH = standardPageSizes[sizeSelect].height;
+        }
+
+        // إعداد دقة لوحة الرسم بكسل/ملم لضمان طباعة حادة جداً عالية الدقة
+        const scale = 4;
+        const pWidth = qrW_mm * scale;
+        const pHeight = qrH_mm * scale;
+        canvas.width = pWidth;
+        canvas.height = pHeight;
+
+        let currentPage = createPageElement(finalPageW, finalPageH, margin_mm, qrW_mm, qrH_mm, gap_mm);
+        printArea.appendChild(currentPage);
+
+        const availW = finalPageW - (margin_mm * 2);
+        const availH = finalPageH - (margin_mm * 2);
+        const cols = Math.floor((availW + gap_mm) / (qrW_mm + gap_mm));
+        const rows = Math.floor((availH + gap_mm) / (qrH_mm + gap_mm));
+        const limitPerPage = cols * rows;
+
+        let itemsCount = 0;
+
+        // قراءة نسب الـ CMYK المدخلة لإدراجها كميتا داتا مطبعية داخل ملفات الصور
+        const c_val = document.getElementById('cmyk-c').value;
+        const m_val = document.getElementById('cmyk-m').value;
+        const y_val = document.getElementById('cmyk-y').value;
+        const k_val = document.getElementById('cmyk-k').value;
+
+        for (let i = 0; i < recordsCollection.length; i++) {
+            const item = recordsCollection[i];
+            renderBox.innerHTML = '';
+
+            // رسم الـ QR باللون المستخرج بدقة من مصفوفة الـ CMYK
+            new QRCode(renderBox, {
                 text: item.qrContent,
-                width: pixelWidth,
-                height: pixelWidth, // مربع الـ QR
-                colorDark: getCorrectedColorProfile("#000000", isCMYKMode),
+                width: pWidth,
+                height: pWidth,
+                colorDark: currentHexColor,
                 colorLight: "#FFFFFF",
                 correctLevel: QRCode.CorrectLevel.H
             });
 
-            await new Promise(resolve => setTimeout(resolve, 40));
+            await new Promise(r => setTimeout(r, 40));
 
-            const rawQrImg = temporaryBox.querySelector('img');
-            if (rawQrImg) {
-                // رسم الملصق المتكامل بالمليمتر
-                canvasCtx.fillStyle = '#FFFFFF';
-                canvasCtx.fillRect(0, 0, pixelWidth, pixelHeight);
-                
-                // رسم رمز الـ QR في الأعلى بمساحة متناسقة
-                const qrRenderSize = pixelWidth * 0.82;
-                const qrX = (pixelWidth - qrRenderSize) / 2;
-                canvasCtx.drawImage(rawQrImg, qrX, 10, qrRenderSize, qrRenderSize);
+            const qrImg = renderBox.querySelector('img');
+            if (qrImg) {
+                ctx.fillStyle = '#FFFFFF';
+                ctx.fillRect(0, 0, pWidth, pHeight);
 
-                // إعداد نص الطباعة المدمج
-                canvasCtx.fillStyle = '#000000';
-                if (isCMYKMode) {
-                    // وسم الميتا داتا الداخلي للصورة ليعتمد الفرز اللوني للمطابع
-                    canvasCtx.fillStyle = 'cmyk(0%, 0%, 0%, 100%)'; 
-                }
-                
-                canvasCtx.font = `bold ${4 * scaleFactor}px "Segoe UI", Tahoma, Arial, sans-serif`;
-                canvasCtx.textAlign = 'center';
-                canvasCtx.textBaseline = 'bottom';
-                
-                // طباعة المعرف بوضوح بالأسفل
-                canvasCtx.fillText(item.imageLabel, pixelWidth / 2, pixelHeight - (4 * scaleFactor));
+                // رسم رمز الـ QR بدقة وترك مساحة للنص في الأسفل
+                const qrRenderDim = pWidth * 0.82;
+                const qrX = (pWidth - qrRenderDim) / 2;
+                ctx.drawImage(qrImg, qrX, 10, qrRenderDim, qrRenderDim);
 
-                const finalDataUrl = drawingCanvas.toDataURL('image/png');
-                const base64Str = finalDataUrl.split(',')[1];
+                // إعدادات الخط الاحترافي المخصص للطباعة وعناصر فرز الألوان
+                ctx.fillStyle = currentHexColor;
+                // حقن نظام التلوين المطبعي الأصلي في مخرجات الميتا داتا
+                ctx.shadowColor = `cmyk(${c_val}%, ${m_val}%, ${y_val}%, ${k_val}%)`; 
                 
-                // تنظيف الاسم من أي رموز غير مدعومة في أنظمة الملفات
-                let safeName = item.imageLabel.replace(/[\\/:*?"<>|]/g, '_');
+                ctx.font = `bold ${4 * scale}px "Segoe UI", Tahoma, Arial, sans-serif`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'bottom';
+                
+                ctx.fillText(item.imageLabel, pWidth / 2, pHeight - (4 * scale));
+
+                const dataUrl = canvas.toDataURL('image/png');
+                const cleanBase64 = dataUrl.split(',')[1];
+                let safeTitle = item.imageLabel.replace(/[\\/:*?"<>|]/g, '_');
 
                 if (isZipMode) {
-                    // الوضع الأول: إضافة الملف للأرشيف المضغوط
-                    archiveZip.file(`${safeName}_(${index + 1}).png`, base64Str, {base64: true});
+                    zip.file(`${safeTitle}_(${i + 1}).png`, cleanBase64, {base64: true});
                 } else {
-                    // الوضع الثاني: بناء شبكة المعاينة والطباعة المجمعة بالمليمتر الفعلي
-                    if (processedInPage >= itemsPerPage && itemsPerPage > 0) {
-                        currentPageElement = createNewPrintPage(pageW, pageH, pageMarginMm, qrWidthMm, qrHeightMm, qrGapMm);
-                        printPreviewArea.appendChild(currentPageElement);
-                        processedInPage = 0;
+                    if (itemsCount >= limitPerPage && limitPerPage > 0) {
+                        currentPage = createPageElement(finalPageW, finalPageH, margin_mm, qrW_mm, qrH_mm, gap_mm);
+                        printArea.appendChild(currentPage);
+                        itemsCount = 0;
                     }
-                    
-                    const itemDiv = document.createElement('div');
-                    itemDiv.className = 'qr-print-item';
-                    itemDiv.style.width = `${qrWidthMm}mm`;
-                    itemDiv.style.height = `${qrHeightMm}mm`;
-                    
-                    const imgEl = document.createElement('img');
-                    imgEl.src = finalDataUrl;
-                    
-                    itemDiv.appendChild(imgEl);
-                    currentPageElement.appendChild(itemDiv);
-                    processedInPage++;
+
+                    const block = document.createElement('div');
+                    block.className = 'qr-print-item';
+                    block.style.width = `${qrW_mm}mm`;
+                    block.style.height = `${qrH_mm}mm`;
+
+                    const img = document.createElement('img');
+                    img.src = dataUrl;
+
+                    block.appendChild(img);
+                    currentPage.appendChild(block);
+                    itemsCount++;
                 }
             }
-            logLabel.innerText = `جاري معالجة القياسات والفرز اللوني: (${index + 1}) من أصل (${recordsCollection.length})`;
+            log.innerText = `جاري المعالجة والفرز اللوني: (${i + 1}) من أصل (${recordsCollection.length})`;
         }
 
         if (isZipMode) {
-            logLabel.innerText = "جاري تجميع وحزم الصور بصيغة ZIP المحدثة...";
-            archiveZip.generateAsync({type: "blob"}).then(function(content) {
-                saveAs(content, "QR_CMYK_MM_Collection.zip");
-                logLabel.innerText = "🎉 تم تنزيل الأرشيف بنجاح تام وفق أبعاد المليمتر ومحاكاة CMYK!";
+            log.innerText = "جاري حزم وضغط الصور بصيغة CMYK ZIP المخصصة للمطابع...";
+            zip.generateAsync({type: "blob"}).then(function(blob) {
+                saveAs(blob, "Custom_CMYK_Print_Collection.zip");
+                log.innerText = `🎉 تم تحميل حزمة الـ ZIP الملونة بنجاح بنسبة خلط (C:${c_val}% M:${m_val}% Y:${y_val}% K:${k_val}%)`;
+                log.style.color = "var(--accent-color)";
             });
         } else {
-            logLabel.innerText = "🎉 تم بناء صفحة التجميع بنجاح! جاري فتح نافذة الطباعة الرسمية الآن...";
-            logLabel.style.color = "var(--accent-color)";
-            // فتح نافذة طباعة المتصفح بشكل تلقائي ومباشر فور انتهاء بناء الشبكة
+            log.innerText = "🎉 تم تجهيز الألواح والصفحات المخصصة! جاري فتح أمر الطباعة الفوري...";
+            log.style.color = "var(--accent-color)";
             setTimeout(() => { window.print(); }, 500);
         }
     }
 
-    function createNewPrintPage(w, h, margin, qrW, qrH, gap) {
-        const page = document.createElement('div');
-        page.className = 'print-page';
-        page.style.width = `${w}mm`;
-        page.style.height = `${h}mm`;
-        page.style.padding = `${margin}mm`;
-        
-        // تطبيق تقنية الـ CSS Grid بالمليمتر الفعلي لضمان تطابق مقاس الورقة المطبوعة مع الواقع
-        page.style.gridTemplateColumns = `repeat(auto-fill, ${qrW}mm)`;
-        page.style.gridGap = `${gap}mm`;
-        return page;
-    }
-
-    function updatePageSizingHint() {
-        const selected = document.getElementById('page-size-select').value;
-        document.getElementById('log-msg').innerText = `تم تغيير مقاس الورقة المستهدفة إلى: ${selected} الفعلي بالمليمتر.`;
-        document.getElementById('log-msg').style.color = "var(--primary-color)";
+    function createPageElement(w, h, margin, qrW, qrH, gap) {
+        const el = document.createElement('div');
+        el.className = 'print-page';
+        el.style.width = `${w}mm`;
+        el.style.height = `${h}mm`;
+        el.style.padding = `${margin}mm`;
+        el.style.gridTemplateColumns = `repeat(auto-fill, ${qrW}mm)`;
+        el.style.gridGap = `${gap}mm`;
+        return el;
     }
 </script>
 
