@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام الـ QR الكثيف الاحترافي المتكامل للتصدير والطباعة</title>
-    <!-- استدعاء المكتبات البرمجية المستقرة والمطلوبة للتشغيل والتصدير -->
+    <title>نظام الـ QR الكثيف الاحترافي - جودة الطباعة الفائقة Ultra-HD</title>
+    <!-- استدعاء المكتبات البرمجية المستقرة -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
@@ -148,7 +148,6 @@
             display: none;
         }
 
-        /* لوحة أزرار التصدير الاحترافية الشاملة */
         .control-panel {
             text-align: center;
             display: flex;
@@ -201,7 +200,6 @@
         th, td { padding: 10px 14px; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
         th { background-color: #f8fafc; position: sticky; top: 0; color: #475569; }
 
-        /* مساحة الطباعة والتجميع المخفية والمجهزة للمقاص */
         #print-preview-area { display: none; background: white; margin: 0 auto; }
         .print-page {
             background: white;
@@ -236,8 +234,8 @@
 <body>
 
 <div class="wrapper">
-    <h1>نظام الـ QR الكثيف الاحترافي (خيارات تصدير صور عالية الدقة وملفات PDF للطباعة الفورية)</h1>
-    <p class="subtitle">قم برفع مصفوفة البيانات البرمجية للرموز، ثم اختر صيغة التصدير المستهدفة عالي الجودة للمطابع مباشرة.</p>
+    <h1>نظام الـ QR الكثيف الاحترافي - نسخة الدقة الفائقة Ultra-HD 10x</h1>
+    <p class="subtitle">تم دمج خوارزميات مضاعفة الأبعاد لمنع الضبابية والشرشرة، مما يضمن مخرجات حادة ونقية جداً ملائمة للمطابع الاحترافية.</p>
 
     <div class="settings-container">
         <div class="section-title">1. إعدادات المقاسات وأبعاد الورقة (بالملم mm)</div>
@@ -310,13 +308,13 @@
     <!-- منطقة رفع الملف -->
     <div class="dropzone" onclick="document.getElementById('excel-csv-file').click()">
         <div class="icon-panel">📊</div>
-        <p style="margin: 5px 0; font-weight: 600;">اضغط هنا لرفع ملف الـ CSV الأساسي</p>
+        <p style="margin: 5px 0; font-weight: 600;">اضغط هنا لرفع ملف الـ CSV</p>
         <input type="file" id="excel-csv-file" accept=".csv">
         <div class="file-status" id="file-status-lbl"></div>
     </div>
 
     <!-- لوحة أدوات التصدير الفائقة المطورة -->
-    <div class="section-title">3. لوحة أدوات استخراج الملفات وتصدير المستندات</div>
+    <div class="section-title">3. لوحة أدوات استخراج الملفات وتصدير المستندات بوضوح فائق</div>
     <div class="control-panel">
         <button id="print-btn" class="btn btn-primary" disabled onclick="executeQrCompilation('PRINT')">
             <span>🖨️</span> عرض وتجميع للطباعة الفورية
@@ -325,7 +323,7 @@
             <span>📄</span> تصدير كملف PDF عالي الجودة
         </button>
         <button id="zip-btn" class="btn btn-success" disabled onclick="executeQrCompilation('ZIP')">
-            <span>📦</span> تصدير كافة الرموز كصور (ZIP)
+            <span>📦</span> تصدير كافة الرموز كصور (ZIP) بدقة فائقة
         </button>
     </div>
 
@@ -443,7 +441,7 @@
             document.getElementById('print-btn').disabled = false;
             document.getElementById('pdf-btn').disabled = false;
             document.getElementById('preview-panel').style.display = 'block';
-            document.getElementById('log-msg').innerText = `تم استيراد (${recordsCollection.length}) سجل بنجاح كامل وجاهزة للتصدير المباشر.`;
+            document.getElementById('log-msg').innerText = `تم استيراد (${recordsCollection.length}) سجل بنجاح وهو جاهز للتوليد فائق الجودة.`;
             document.getElementById('log-msg').style.color = 'var(--accent-color)';
         }
     }
@@ -461,7 +459,7 @@
         
         printArea.innerHTML = '';
         log.style.color = "orange";
-        log.innerText = "جاري تحضير وتجميع البيانات وفق الخوارزميات عالية الجودة...";
+        log.innerText = "جاري معالجة الصور وضبط محرك الرسم الفائق البديل (Super-Sampling)...";
 
         const zip = new JSZip();
 
@@ -482,12 +480,17 @@
             finalPageH = standardPageSizes[sizeSelect].height;
         }
 
-        // استخدام معامل دقة 5 أضعاف لضمان خروج جودة PDF والصور بوضوح Ultra-HD نقي خالٍ من الضبابية
-        const scale = 5;
+        // معامل دقة فائق (10 أضعاف الأبعاد الافتراضية) لإنتاج دقة صلبة خالية تماماً من البكسلة أو التشويش
+        const scale = 10;
         const pWidth = qrW_mm * scale;
         const pHeight = qrH_mm * scale;
         canvas.width = pWidth;
         canvas.height = pHeight;
+
+        // إجبار المتصفح على إيقاف تنعيم الصور التلقائي لإنتاج كتل لونية حادة جداً
+        ctx.imageSmoothingEnabled = false;
+        ctx.webkitImageSmoothingEnabled = false;
+        ctx.mozImageSmoothingEnabled = false;
 
         let currentPage = createPageElement(finalPageW, finalPageH, margin_mm, qrW_mm, qrH_mm, gap_mm);
         printArea.appendChild(currentPage);
@@ -509,6 +512,7 @@
             const item = recordsCollection[i];
             renderBox.innerHTML = '';
 
+            // توليد الـ QR الخام بأبعاد بكسلية ضخمة ومباشرة تمنع التمطيط اللاحق
             new QRCode(renderBox, {
                 text: item.qrContent,
                 width: pWidth,
@@ -518,17 +522,19 @@
                 correctLevel: QRCode.CorrectLevel.H
             });
 
-            await new Promise(r => setTimeout(r, 25));
+            await new Promise(r => setTimeout(r, 20));
 
             const qrImg = renderBox.querySelector('img');
             if (qrImg) {
                 ctx.fillStyle = '#FFFFFF';
                 ctx.fillRect(0, 0, pWidth, pHeight);
 
+                // رسم الكود مستقلاً مع الحفاظ على الأطراف نقية وحادة
                 const qrRenderDim = pWidth * 0.84;
                 const qrX = (pWidth - qrRenderDim) / 2;
                 ctx.drawImage(qrImg, qrX, 12, qrRenderDim, qrRenderDim);
 
+                // ضبط إعدادات النص بما يوافق الحجم الخارق والجديد للوحة الرسم
                 ctx.fillStyle = currentHexColor;
                 ctx.shadowColor = `cmyk(${c_val}%, ${m_val}%, ${y_val}%, ${k_val}%)`;
                 
@@ -564,23 +570,22 @@
                     itemsCount++;
                 }
             }
-            log.innerText = `جاري التجميع والمعايرة: (${i + 1}) من أصل (${recordsCollection.length})`;
+            log.innerText = `جاري المعالجة بدقة فائقة: (${i + 1}) من أصل (${recordsCollection.length})`;
         }
 
         if (mode === 'ZIP') {
-            log.innerText = "جاري بناء وضغط الصور بصيغة ZIP عالية الجودة...";
+            log.innerText = "جاري ضغط وتصدير أرشيف الصور عالي الكثافة (Ultra-HD ZIP)...";
             zip.generateAsync({type: "blob"}).then(function(blob) {
-                saveAs(blob, "High_Res_QR_Images.zip");
-                log.innerText = "🎉 تم تنزيل الأرشيف بنجاح تام بجودة فائقة الحواف!";
+                saveAs(blob, "Ultra_HD_Print_QR_Collection.zip");
+                log.innerText = "🎉 تم تحميل الأرشيف فائق الجودة والوضوح بنجاح تام!";
                 log.style.color = "var(--accent-color)";
             });
         } else if (mode === 'PDF') {
-            log.innerText = "🎉 تم تجهيز مستند الصفحات! جاري توليد وحفظ ملف الـ PDF عالي الجودة الآن...";
+            log.innerText = "🎉 تم بناء الصفحات! جاري فتح خيارات الحفظ كملف PDF عالي الجودة...";
             log.style.color = "var(--accent-color)";
-            // استدعاء نافذة الحفظ المباشر للمتصفح كـ PDF مع تطبيق هوامش الصفر لضمان احتواء مقاس الورقة المختار بدقة
             setTimeout(() => { window.print(); }, 400);
         } else {
-            log.innerText = "🎉 تم تجهيز لوحة التجميع! جاري فتح أمر الطباعة الفوري...";
+            log.innerText = "🎉 تم تجهيز الألواح! جاري فتح نافذة الطباعة الفورية...";
             log.style.color = "var(--accent-color)";
             setTimeout(() => { window.print(); }, 400);
         }
