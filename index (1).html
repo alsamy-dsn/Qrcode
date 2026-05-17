@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مُولّد QR كود مجمع من ملف إكسل/CSV</title>
+    <!-- استدعاء مكتبات توليد QR وضغط الملفات وحفظها تلقائياً -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #2b579a;
+            --accent-color: #107c41; /* Excel Green */
+            --bg-color: #f3f2f1;
+            --text-color: #323130;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+
+        .description {
+            text-align: center;
+            color: #605e5c;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .upload-section {
+            border: 2px dashed #a19f9d;
+            padding: 30px;
+            text-align: center;
+            border-radius: 6px;
+            background: #faf9f8;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-section:hover {
+            border-color: var(--accent-color);
+            background: #f3fff7;
+        }
+
+        .upload-section input[type="file"] {
+            display: none;
+        }
+
+        .upload-icon {
+            font-size: 40px;
+            color: var(--accent-color);
+            margin-bottom: 10px;
+        }
+
+        .file-info {
+            margin-top: 15px;
+            font-weight: bold;
+            color: var(--accent-color);
+            display: none;
+        }
+
+        .actions {
+            margin-top: 25px;
+            text-align: center;
+        }
+
+        button {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        button:hover {
+            background-color: #0b592e;
+        }
+
+        button:disabled {
+            background-color: #c8c6c4;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .status-message {
+            margin-top: 20px;
+            text-align: center;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        /* جدول المعاينة */
+        .preview-section {
+            margin-top: 40px;
+            display: none;
+        }
+
+        .preview-section h3 {
+            border-bottom: 2px solid #edf2f7;
+            padding-bottom: 10px;
+            color: #323130;
+        }
+
+        .table-wrapper {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #e1dfdd;
+            border-radius: 4px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: right;
+        }
+
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #edf2f7;
+            font-size: 14px;
+        }
+
+        th {
+            background-color: #f3f2f1;
+            position: sticky;
+            top: 0;
+            color: #323130;
+        }
+
+        tr:hover {
+            background-color: #faf9f8;
+        }
+
+        /* عنصر مخفي لتوليد الصور داخل الكواليس */
+        #hidden-qr-buffer {
+            position: absolute;
+            left: -9999px;
+            top: -9999px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>مُولّد الـ QR الكثيف من ملفات البيانات</h1>
+    <p class="description">قم برفع ملف إكسل بعد حفظه بصيغة (CSV)، واجعل العمود الأول يحتوي على (الرابط أو النص) والعمود الثاني يحتوي على (اسم الصورة المطلوبة).</p>
+
+    <!-- منطقة رفع الملف -->
+    <div class="upload-section" onclick="document.getElementById('csv-file').click()">
+        <div class="upload-icon">📊</div>
+        <p>اضغط هنا لاختيار ملف الـ CSV من جهازك</p>
+        <span style="font-size: 12px; color: #a19f9d;">(تأكد أن الملف مرمز بـ UTF-8 إذا كان يحتوي على لغة عربية)</span>
+        <input type="file" id="csv-file" accept=".csv">
+        <div class="file-info" id="file-info"></div>
+    </div>
+
+    <!-- أزرار التحكم -->
+    <div class="actions">
+        <button id="process-btn" disabled onclick="generateAndZipQRs()">توليد الـ QR وتحميل ملف ZIP</button>
+    </div>
+
+    <div class="status-message" id="status-msg"></div>
+
+    <!-- قسم المعاينة البيانات المرفوعة -->
+    <div class="preview-section" id="preview-section">
+        <h3>معاينة البيانات المكتشفة من الملف:</h3>
+        <div class="table-wrapper">
+            <table id="preview-table">
+                <thead>
+                    <tr>
+                        <th>المحتوى / التسلسل (QR Data)</th>
+                        <th>اسم ملف الصورة الناتج (File Name)</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- حاوية التوليد المخفية -->
+<div id="hidden-qr-buffer"></div>
+
+<script>
+    let parsedData = [];
+
+    // الاستماع لحدث اختيار الملف
+    document.getElementById('csv-file').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        document.getElementById('file-info').innerText = "الملف المختار: " + file.name;
+        document.getElementById('file-info').style.display = "block";
+
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+            const text = evt.target.result;
+            processCSV(text);
+        };
+        // القراءة بترميز UTF-8 لدعم اللغة العربية والرموز بشكل صحيح
+        reader.readAsText(file, 'UTF-8');
+    });
+
+    // معالجة نصوص ملف الـ CSV تفصيلياً
+    function processCSV(text) {
+        parsedData = [];
+        const lines = text.split(/\r?\n/);
+        const tbody = document.querySelector('#preview-table tbody');
+        tbody.innerHTML = '';
+
+        for (let i = 0; i < lines.length; i++) {
+            if (!lines[i].trim()) continue; // تخطي السطور الفارغة
+            
+            // تقسيم السطر بناءً على الفاصلة
+            const columns = lines[i].split(',');
+            if (columns.length >= 1) {
+                const qrData = columns[0].trim();
+                // إذا لم يوجد عمود ثانٍ لاسم الملف، استخدم نفس قيمة الـ QR كاسم للملف
+                const fileName = columns[1] ? columns[1].trim() : qrData;
+
+                if (qrData) {
+                    parsedData.push({ qrData, fileName });
+
+                    // إضافة سطر للمعاينة في الجدول
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `<td>${qrData}</td><td>${fileName}.png</td>`;
+                    tbody.appendChild(tr);
+                }
+            }
+        }
+
+        if (parsedData.length > 0) {
+            document.getElementById('process-btn').disabled = false;
+            document.getElementById('preview-section').style.display = 'block';
+            document.getElementById('status-msg').innerText = `تم العثور على ${parsedData.length} قيد جاهز للتوليد.`;
+            document.getElementById('status-msg').style.color = 'var(--accent-color)';
+        } else {
+            document.getElementById('process-btn').disabled = true;
+            document.getElementById('status-msg').innerText = "لم يتم العثور على بيانات صالحة في الملف.";
+            document.getElementById('status-msg').style.color = 'red';
+        }
+    }
+
+    // توليد الـ QR وضغطهم في ملف ZIP واحد للتحميل المباشر
+    async function generateAndZipQRs() {
+        const btn = document.getElementById('process-btn');
+        const statusMsg = document.getElementById('status-msg');
+        const buffer = document.getElementById('hidden-qr-buffer');
+        
+        btn.disabled = true;
+        statusMsg.innerText = "جاري توليد صور الـ QR وضغطها... يرجى الانتظار.";
+        statusMsg.style.color = "orange";
+
+        const zip = new JSZip();
+
+        for (let i = 0; i < parsedData.length; i++) {
+            const item = parsedData[i];
+            buffer.innerHTML = ''; // تنظيف الحاوية المؤقتة
+
+            // توليد كود الـ QR بداخل الـ buffer
+            const qr = new QRCode(buffer, {
+                text: item.qrData,
+                width: 256,
+                height: 256,
+                correctLevel: QRCode.CorrectLevel.H
+            });
+
+            // انتظار جزء من الثانية ليتأكد المتصفح من رسم الـ الـ Image/Canvas بالكامل
+            await new Promise(resolve => setTimeout(resolve, 50));
+
+            const imgElement = buffer.querySelector('img');
+            if (imgElement) {
+                const imgSrc = imgElement.src;
+                // استخراج بيانات الـ Base64 من الصورة لإضافتها للملف المضغوط
+                const base64Data = imgSrc.split(',')[1];
+                
+                // إضافة الصورة إلى الـ ZIP باسم الملف المحدد من الإكسل
+                zip.file(`${item.fileName}.png`, base64Data, {base64: true});
+            }
+            
+            statusMsg.innerText = `جاري معالجة: ${i + 1} من أصل ${parsedData.length}`;
+        }
+
+        // إنشاء وتنزيل ملف الـ ZIP النهائي للمستخدم
+        statusMsg.innerText = "جاري حزم الملفات وتصدير أرشيف ZIP الحالي...";
+        statusMsg.style.color = "var(--accent-color)";
+        
+        zip.generateAsync({type:"blob"}).then(function(content) {
+            saveAs(content, "QR_Codes_Collection.zip");
+            statusMsg.innerText = "🎉 تم إنتاج وتحميل ملف الصور المضغوط بنجاح!";
+            btn.disabled = false;
+        }).catch(function(err) {
+            statusMsg.innerText = "حدث خطأ أثناء محاولة ضغط الملفات: " + err.message;
+            statusMsg.style.color = "red";
+            btn.disabled = false;
+        });
+    }
+</script>
+
+</body>
+</html>
